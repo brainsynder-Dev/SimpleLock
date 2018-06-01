@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>simplepets.brainsynder</groupId>
-    <artifactId>SimplePets</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <artifactId>SimpleLock</artifactId>
+    <version>0.1-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,21 +29,6 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <excludes>
-                        <exclude>**/simplepets/brainsynder/app/PetApplication.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>simplepets.brainsynder.app.PetApplication</mainClass>
-                        </manifest>
-                    </archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -56,47 +41,12 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>sk89q-repo</id>
-            <url>http://maven.sk89q.com/repo/</url>
-        </repository>
-        <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
-        </repository>
-        <repository>
-            <id>plot-repo</id>
-            <url>http://ci.athion.net/job/PlotSquared/ws/mvn/</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
             <id>cubekrowd-repo</id>
             <url>https://mavenrepo.cubekrowd.net/artifactory/repo/</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>com.plotsquared</groupId>
-            <artifactId>plotsquared-api</artifactId>
-            <version>18.03.12-c208c53-1970</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
-            <version>1.6.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>6.1.1-SNAPSHOT</version>
-            <scope>provided</scope>
-            <type>jar</type>
-        </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -114,26 +64,6 @@
             <artifactId>SimpleAPI</artifactId>
             <version>3.8</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.Brettflan</groupId>
-            <artifactId>WorldBorder</artifactId>
-            <version>d8d1b28b5747c416d68f5ac78d2f1356bc3e7423</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit-1-11-2</artifactId>
-            <version>1.11.2-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/craftbukkit-1.11.2-R0.1-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit-1-12-2</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/craftbukkit-1.12.2-R0.1-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
