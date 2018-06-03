@@ -62,11 +62,6 @@ public class Utilities {
             if (above == null) continue;
             if (above.getType() == Material.AIR) continue;
             if (findSign(above.getLocation()) != null) return true;
-
-            Block below = b.getRelative(BlockFace.DOWN); // Unsure if this actually works.
-            if (below == null) continue;
-            if (below.getType() == Material.AIR) continue;
-            if (findSign(below.getLocation()) != null) return true;
         }
 
         return false;
