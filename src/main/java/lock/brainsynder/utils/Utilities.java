@@ -35,6 +35,36 @@ public class Utilities {
         return true;
     }
 
+    public static List<Block> canExplode (List<Block> blocks) {
+        List<Block> remove = new ArrayList<>();
+        List<Block> checked = new ArrayList<>();
+        for (Block block : blocks) {
+            if (isProtected(checked, block))remove.add(block);
+        }
+        return remove;
+    }
+
+    private static boolean isProtected (List<Block> checkedBlocks, Block block) {
+        if (findSign(block.getLocation()) != null) return true;
+        for (BlockFace face : ALL_FACES) {
+            Block b = block.getRelative(face);
+            if (b == null) continue;
+            Material type = b.getType();
+            if (type == Material.AIR) continue;
+            if (checkedBlocks.contains(b)) continue;
+            checkedBlocks.add(b);
+
+            if (findSign(b.getLocation()) != null) return true;
+
+            Block above = b.getRelative(BlockFace.UP);
+            if (above == null) continue;
+            if (above.getType() == Material.AIR) continue;
+            if (findSign(above.getLocation()) != null) return true;
+        }
+
+        return false;
+    }
+
     // Checks if a can be moved (If the block is protected it will return false).
     public static boolean canMoveBlock(List<Block> checkedBlocks, Block block) {
         if (findSign(block.getLocation()) != null) return false;
