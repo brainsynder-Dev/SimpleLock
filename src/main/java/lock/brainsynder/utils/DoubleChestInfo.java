@@ -1,5 +1,6 @@
 package lock.brainsynder.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -25,15 +26,6 @@ public class DoubleChestInfo {
             sideMap.put(side.name(), location.getBlock());
         }
 
-        void setBlock(Block block) {
-            sideMap.put(Side.RIGHT.name(), block);
-        }
-
-        DoubleChestInfo setLocation(Location location) {
-            sideMap.put(Side.RIGHT.name(), location.getBlock());
-            return this;
-        }
-
         public Block getBlock(Side side) {
             if (sideMap.containsKey(side.name())) {
                 return sideMap.get(side.name());
@@ -43,6 +35,7 @@ public class DoubleChestInfo {
 
         public Location getLocation(Side side) {
             if (sideMap.containsKey(side.name())) {
+                Bukkit.broadcastMessage("Contains Side: "+side.name());
                 return sideMap.get(side.name()).getLocation();
             }
             return null;        
