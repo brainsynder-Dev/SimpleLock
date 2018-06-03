@@ -39,7 +39,9 @@ public class Utilities {
         List<Block> remove = new ArrayList<>();
         List<Block> checked = new ArrayList<>();
         for (Block block : blocks) {
-            if (isProtected(checked, block))remove.add(block);
+            if (isProtected(checked, block)) {
+                remove.add(block);
+            }
         }
         return remove;
     }
@@ -60,6 +62,11 @@ public class Utilities {
             if (above == null) continue;
             if (above.getType() == Material.AIR) continue;
             if (findSign(above.getLocation()) != null) return true;
+
+            Block below = b.getRelative(BlockFace.DOWN); // Unsure if this actually works.
+            if (below == null) continue;
+            if (below.getType() == Material.AIR) continue;
+            if (findSign(below.getLocation()) != null) return true;
         }
 
         return false;
@@ -94,15 +101,18 @@ public class Utilities {
         Block block = location.getBlock();
         if (block == null) return null;
         if (block.getType() == Material.AIR) return null;
-
+        if (block.getType() == Material.WALL_SIGN) {
+            Sign sign = (Sign) block.getState();
+            if (sign.getLines()[0].equals("[Private]")) return sign;
+        }
         MaterialData data = block.getState().getData();
 
         if (data instanceof Door) {
             Door door = (Door) data;
             if (door.isTopHalf()) {
-                locations.add(location.clone().subtract(0,1,0));
-            }else{
-                locations.add(location.clone().add(0,1,0));
+                locations.add(location.clone().subtract(0, 1, 0));
+            } else {
+                locations.add(location.clone().add(0, 1, 0));
             }
         }
 
