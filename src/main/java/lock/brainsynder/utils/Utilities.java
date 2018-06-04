@@ -27,7 +27,7 @@ public class Utilities {
         return false;
     }
 
-    public static boolean canMoveBlocks (List<Block> blocks) {
+    public static boolean canMoveBlocks(List<Block> blocks) {
         List<Block> checked = new ArrayList<>();
         for (Block block : blocks) {
             if (!canMoveBlock(checked, block)) return false;
@@ -35,7 +35,7 @@ public class Utilities {
         return true;
     }
 
-    public static List<Block> canExplode (List<Block> blocks) {
+    public static List<Block> canExplode(List<Block> blocks) {
         List<Block> remove = new ArrayList<>();
         List<Block> checked = new ArrayList<>();
         for (Block block : blocks) {
@@ -46,7 +46,7 @@ public class Utilities {
         return remove;
     }
 
-    private static boolean isProtected (List<Block> checkedBlocks, Block block) {
+    private static boolean isProtected(List<Block> checkedBlocks, Block block) {
         if (findSign(block.getLocation()) != null) return true;
         for (BlockFace face : ALL_FACES) {
             Block b = block.getRelative(face);
@@ -90,7 +90,7 @@ public class Utilities {
         return true;
     }
 
-    public static Sign findSign (Location location) {
+    public static Sign findSign(Location location) {
         List<Location> locations = new ArrayList<>();
         locations.add(location);
         Block block = location.getBlock();
@@ -105,10 +105,16 @@ public class Utilities {
         if (data instanceof Door) {
             Door door = (Door) data;
             if (door.isTopHalf()) {
-                locations.add(location.clone().subtract(0, 1, 0));
+                locations.add(location.getBlock().getRelative(BlockFace.DOWN).getLocation());
             } else {
-                locations.add(location.clone().add(0, 1, 0));
+                locations.add(location.getBlock().getRelative(BlockFace.UP).getLocation());
             }
+        }
+
+        if (isDoubleChest(block)) {
+            DoubleChestInfo info = DoubleChestUtil.getChest(block);
+            locations.add(info.getLocation(Side.LEFT));
+            locations.add(info.getLocation(Side.RIGHT));
         }
 
         for (Location loc : locations) {
@@ -123,7 +129,7 @@ public class Utilities {
         return null;
     }
 
-    public static boolean isSimilar (ItemStack[] content1, ItemStack[] content2) {
+    public static boolean isSimilar(ItemStack[] content1, ItemStack[] content2) {
         if (content1.length != content2.length) return false;
         for (int i = 0; i < content1.length; i++) {
             if ((content1[i] == null) || (content1[i].getType() == Material.AIR)) continue;
