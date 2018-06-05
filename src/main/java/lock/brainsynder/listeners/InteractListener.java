@@ -81,7 +81,8 @@ public class InteractListener implements Listener {
         if (sign == null) return;
         ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
         if (data == null) return;
-        if ((!data.getOwnerUUID().equals(e.getPlayer().getUniqueId().toString())) && (!data.isPlayerAllowed(e.getPlayer()))) {
+        if ((!data.getOwnerUUID().equals(e.getPlayer().getUniqueId().toString()))) {
+            if (data.isPlayerAllowed(e.getPlayer())) return;
             e.setCancelled(true);
             e.setUseInteractedBlock(Event.Result.DENY);
             e.setUseItemInHand(Event.Result.DENY);
