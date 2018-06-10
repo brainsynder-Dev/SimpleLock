@@ -34,6 +34,7 @@ public class InteractListener implements Listener {
         Block block = e.getClickedBlock();
         if (block == null) return;
         if (block.getType() == Material.WALL_SIGN) return;
+        if (!core.getProtectedTypes().contains(block.getType())) return; // Chests that the block can be protected
         BlockFace clickedFace = e.getBlockFace();
         if ((clickedFace != BlockFace.NORTH)
                 && (clickedFace != BlockFace.SOUTH)
@@ -74,7 +75,9 @@ public class InteractListener implements Listener {
 
     @EventHandler
     public void tryClick (PlayerInteractEvent e) {
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (e.getAction().name().contains("RIGHT")) return;
+        // error
+        if (e.getPlayer().isSneaking() && (!e.getItem().getType().name().contains("SIGN"))) return;
         Block block = e.getClickedBlock();
         if (block == null) return;
         Sign sign = ProtectionUtils.findProtectionSign(block);
@@ -116,5 +119,14 @@ public class InteractListener implements Listener {
 
         ProtectionUtils.removeProtection(sign);
         Utilities.sendActionMessage(e.getPlayer(), "&a&lBlock has been successfully unprotected");
+    }
+
+    // prevents the player from placing a chest next to an already claimed chest (when forming a double chest)
+    @EventHandler
+    public void onPlace (BlockPlaceEvent e) {
+        if (!Utilities.canPlaceBlock(e.getBlockPlaced(), e.getPlayer())) {
+            e.setBuild(false);
+            e.setCancelled(true);
+        }
     }
 }

@@ -1,16 +1,26 @@
 package lock.brainsynder.listeners;
 
+import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.List;
 
 public class BlockListener implements Listener {
+
+    // Should prevent zombies from breaking the door
+    @EventHandler
+    public void onZombieBreak (EntityBreakDoorEvent e) {
+        if (!(e.getEntity() instanceof Zombie)) return;
+        if (ProtectionUtils.hasAttachedSign(e.getBlock()) != null) e.setCancelled(true);
+    }
 
     // Should prevent the blocks from being exploded
     @EventHandler
