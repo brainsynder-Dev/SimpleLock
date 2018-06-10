@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
@@ -19,6 +20,11 @@ public class BlockListener implements Listener {
     @EventHandler
     public void onZombieBreak (EntityBreakDoorEvent e) {
         if (!(e.getEntity() instanceof Zombie)) return;
+        if (ProtectionUtils.hasAttachedSign(e.getBlock()) != null) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPhysics (BlockPhysicsEvent e) {
         if (ProtectionUtils.hasAttachedSign(e.getBlock()) != null) e.setCancelled(true);
     }
 
