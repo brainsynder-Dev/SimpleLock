@@ -4,6 +4,7 @@ import lock.brainsynder.Core;
 import lock.brainsynder.storage.ProtectionData;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -51,13 +52,16 @@ public class ProtectionUtils {
     }
 
     // Registers a protection sign
-    public static void registerProtection (Player player, Block sign) {
+    public static void registerProtection (OfflinePlayer player, Block sign) {
         ProtectionData data = new ProtectionData();
         data.setOwnerName(player.getName());
         data.setOwnerUUID(player.getUniqueId().toString());
 
         protectionMap.put(Utilities.blockLocToString(sign.getLocation()), data);
-        Utilities.sendActionMessage(player, "&a&lBlock has been protected");
+        if (player.isOnline()) {
+            Utilities.sendActionMessage(player.getPlayer(), "&a&lBlock has been protected");
+        }
+
 
     }
 
