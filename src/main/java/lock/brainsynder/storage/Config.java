@@ -12,38 +12,23 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class FileMaker {
+public class Config {
+    public static String ALLOWED_BLOCKS = "allowed-blocks",
+            PLAYER_NOT_FOUND = "message.player-not-found",
+            PLAYER_ADDED = "message.add-player",
+            PLAYER_ALREADY_ADDED = "message.player-already-added",
+            PLAYER_TRUSTED = "message.player-trusted",
+            PLAYER_ALREADY_TRUSTED = "message.player-already-trusted",
+            PLAYER_TEMP = "message.player-temp-added",
+            PLAYER_ALREADY_TEMP = "message.player-already-temp",
+            PLAYER_REMOVED = "message.player-removed",
+            COULD_NOT_REMOVE = "message.cant-remove-player",
+            NOT_PROTECTION_SIGN = "message.not-protection-sign";
+
     private File file;
     private FileConfiguration configuration;
 
-    public FileMaker(Plugin plugin, String directory, String fileName) {
-        try {
-            File folder = new File(plugin.getDataFolder().toString() + File.separator + directory);
-            if (!folder.exists()) folder.mkdirs();
-
-            file = new File(folder, fileName);
-            if (!file.exists()) file.createNewFile();
-
-            new File(plugin.getDataFolder().toString() + File.separator + directory, fileName);
-            this.configuration = YamlConfiguration.loadConfiguration(file);
-        } catch (Throwable ignored) {
-        }
-    }
-
-    public FileMaker(File folder, String fileName) {
-        try {
-            if (!folder.exists()) folder.mkdirs();
-
-            file = new File(folder, fileName);
-            if (!file.exists()) file.createNewFile();
-
-            this.file = new File(folder, fileName);
-            this.configuration = YamlConfiguration.loadConfiguration(file);
-        } catch (Throwable ignored) {
-        }
-    }
-
-    public FileMaker(Plugin plugin, String fileName) {
+    public Config(Plugin plugin, String fileName) {
         file = new File(plugin.getDataFolder(), fileName);
         if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
         if (!file.exists()) try {
@@ -53,7 +38,7 @@ public class FileMaker {
         this.configuration = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void setDefault (String key, Object value) {
+    public void setDefault(String key, Object value) {
         if (!isSet(key)) set(key, value);
     }
 
