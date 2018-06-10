@@ -23,7 +23,11 @@ public class Config {
             PLAYER_ALREADY_TEMP = "message.player-already-temp",
             PLAYER_REMOVED = "message.player-removed",
             COULD_NOT_REMOVE = "message.cant-remove-player",
-            NOT_PROTECTION_SIGN = "message.not-protection-sign";
+            NOT_PROTECTION_SIGN = "message.not-protection-sign",
+            TRANSFER_START = "message.transfer-start",
+            TRANSFER_SUCCESS = "message.transfer-success",
+            NONE_TRANSFERRED = "message.none-transferred",
+            TRANSFER_NO_MEMORY = "message.no-memory-transfer";
 
     private File file;
     private FileConfiguration configuration;
@@ -127,7 +131,7 @@ public class Config {
 
     public Map<String, Object> getConfigSectionValue(Object o, boolean deep) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        Map<String, Object> map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (o == null) {
             return map;
         } else {
