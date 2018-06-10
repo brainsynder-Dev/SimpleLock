@@ -17,6 +17,7 @@ public class SimpleLockCommand extends ParentCommand {
         registerSub(new Temp(core));
         registerSub(new Info(core));
         registerSub(new Remove(core));
+        registerSub(new Transfer(core));
     }
 
     @Override
