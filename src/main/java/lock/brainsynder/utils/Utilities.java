@@ -1,12 +1,16 @@
 package lock.brainsynder.utils;
 
 import lock.brainsynder.storage.ProtectionData;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
 import simple.brainsynder.nms.IActionMessage;
@@ -14,6 +18,7 @@ import simple.brainsynder.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Utilities {
     private static IActionMessage actionMessage;
@@ -49,13 +54,10 @@ public class Utilities {
                 for (BlockFace face : FACES) {
                     Block b = block.getRelative(face);
                     if ((b.getType() == block.getType())) {
-                        Bukkit.broadcastMessage("Is Chest");
                         Sign sign = ProtectionUtils.hasAttachedSign(b);
                         if (sign != null) {
-                            Bukkit.broadcastMessage("Is Sign");
                             ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
                             if (!data.isOwner(player)) {
-                                Bukkit.broadcastMessage("Is not owner");
                                 return false;
                             }
                         }
