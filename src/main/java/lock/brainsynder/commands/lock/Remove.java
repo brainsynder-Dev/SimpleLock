@@ -15,14 +15,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @ICommand(
-        name = "add",
-        usage = "&3[&b~&3] &7/simplelock add &b<player>",
-        description = "Adds a player to the sign you are looking at"
+        name = "remove",
+        usage = "&3[&b~&3] &7/simplelock remove &b<player>",
+        description = "Removes a player from the sign you are looking at"
 )
-public class Add extends SubCommand {
+public class Remove extends SubCommand {
     private Core core;
 
-    public Add (Core core) {
+    public Remove (Core core) {
         this.core = core;
     }
 
@@ -61,10 +61,10 @@ public class Add extends SubCommand {
 
         Sign sign = (Sign) block.getState();
         ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
-        if (!data.addPlayer(offline)) {
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_ALREADY_ADDED, true).replace("{user}", name));
+        if (!data.remove(offline)) {
+            player.sendMessage(core.getConfiguration().getString(Config.COULD_NOT_REMOVE, true).replace("{user}", name));
         }else{
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_ADDED, true).replace("{user}", name));
+            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_REMOVED, true).replace("{user}", name));
         }
     }
 }

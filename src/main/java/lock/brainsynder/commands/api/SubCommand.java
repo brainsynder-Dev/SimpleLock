@@ -4,7 +4,9 @@ import lock.brainsynder.commands.api.annotations.ICommand;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import simple.brainsynder.utils.Reflection;
 
 import java.util.*;
 
@@ -28,7 +30,14 @@ public class SubCommand {
         ICommand command = getCommand(getClass());
         if (command == null) return;
         if (command.usage().isEmpty()) return;
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', command.usage()));
+        String usage = ChatColor.translateAlternateColorCodes('&', command.usage());
+        String description = ChatColor.translateAlternateColorCodes('&', command.description());
+
+        if (sender instanceof Player) {
+            Reflection.getTellraw(usage).tooltip(ChatColor.GRAY+description).send((Player) sender);
+        }else{
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', command.usage()));
+        }
     }
 
     public ICommand getCommand (Class<?> clazz) {

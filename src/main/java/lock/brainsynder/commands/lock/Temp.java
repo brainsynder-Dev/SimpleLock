@@ -14,16 +14,19 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+
 @ICommand(
-        name = "add",
-        usage = "&3[&b~&3] &7/simplelock add &b<player>",
-        description = "Adds a player to the sign you are looking at"
+        name = "temp",
+        usage = "&3[&b~&3] &7/simplelock temp &b<player> <seconds>",
+        description = "Adds the player temporarily for the selected seconds"
 )
-public class Add extends SubCommand {
+public class Temp extends SubCommand {
     private Core core;
 
-    public Add (Core core) {
+    public Temp (Core core) {
         this.core = core;
+        registerCompletion(1, Arrays.asList("5", "10", "40", "60", "120"));
     }
 
     @Override
@@ -58,13 +61,23 @@ public class Add extends SubCommand {
             return;
         }
 
+        if (args.length == 1) {
+            sendUsage(sender);
+            return;
+        }
+        int seconds = 0;
+        try {
+            seconds = Integer.parseInt(args[1]);
+        }catch (NumberFormatException e){
+            return;
+        }
 
         Sign sign = (Sign) block.getState();
         ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
-        if (!data.addPlayer(offline)) {
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_ALREADY_ADDED, true).replace("{user}", name));
+        if (!data.addTemporary(offline, seconds)) {
+            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_ALREADY_TEMP, true).replace("{user}", name).replace("{seconds}", ""+seconds));
         }else{
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_ADDED, true).replace("{user}", name));
+            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_TEMP, true).replace("{user}", name).replace("{seconds}", ""+seconds));
         }
     }
 }

@@ -1,9 +1,9 @@
 package lock.brainsynder.commands;
 
+import lock.brainsynder.Core;
 import lock.brainsynder.commands.api.ParentCommand;
 import lock.brainsynder.commands.api.annotations.ICommand;
-import lock.brainsynder.commands.lock.Add;
-import lock.brainsynder.commands.lock.Trust;
+import lock.brainsynder.commands.lock.*;
 import org.bukkit.command.CommandSender;
 
 @ICommand(
@@ -11,9 +11,12 @@ import org.bukkit.command.CommandSender;
         alias = {"sl"}
 )
 public class SimpleLockCommand extends ParentCommand {
-    public SimpleLockCommand () {
-        registerSub(new Add());
-        registerSub(new Trust());
+    public SimpleLockCommand (Core core) {
+        registerSub(new Add(core));
+        registerSub(new Trust(core));
+        registerSub(new Temp(core));
+        registerSub(new Info(core));
+        registerSub(new Remove(core));
     }
 
     @Override

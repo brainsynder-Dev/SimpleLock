@@ -30,10 +30,12 @@ public class Core extends JavaPlugin {
         ProtectionUtils.loadProtection(this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new InteractListener(this), this);
+
+        // Command registering
         CommandRegistry registry = new CommandRegistry(this);
         try {
             registry.register(new TestCommand());
-            registry.register(new SimpleLockCommand());
+            registry.register(new SimpleLockCommand(this));
         } catch (Exception e) {
             e.printStackTrace();
         }
