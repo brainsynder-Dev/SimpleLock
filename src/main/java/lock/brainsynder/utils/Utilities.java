@@ -174,7 +174,7 @@ public class Utilities {
             if (b.getState() instanceof Sign) {
                 org.bukkit.material.Sign sign = (org.bukkit.material.Sign) b.getState().getData();
                 if (sign.getAttachedFace() == face.getOppositeFace())
-                    signs.put(blockLocToString(b.getLocation()), (Sign) b.getState());
+                    if (!signs.containsKey(blockLocToString(b.getLocation()))) signs.put(blockLocToString(b.getLocation()), (Sign) b.getState());
             }
         }
 
@@ -213,7 +213,7 @@ public class Utilities {
                 if (b.getState() instanceof Sign) {
                     org.bukkit.material.Sign sign = (org.bukkit.material.Sign) b.getState().getData();
                     if (sign.getAttachedFace() == face.getOppositeFace())
-                        signs.put(blockLocToString(b.getLocation()), (Sign) b.getState());
+                        if (!signs.containsKey(blockLocToString(b.getLocation()))) signs.put(blockLocToString(b.getLocation()), (Sign) b.getState());
                 }
             }
         }
