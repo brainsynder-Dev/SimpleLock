@@ -3,6 +3,10 @@ package lock.brainsynder.storage;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import simple.brainsynder.nbt.StorageTagCompound;
+import simple.brainsynder.utils.Base64Wrapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +16,9 @@ import java.util.UUID;
 public class ProtectionData {
     private String ownerName;
     private String ownerUUID;
+    private boolean allowHoppers = false;
+    private boolean allowRedstone = false;
+    private boolean allowFriends = false;
 
     // A collection of names/UUIDs of players that can
     // access the block when the owner is offline
@@ -36,6 +43,9 @@ public class ProtectionData {
     }
 
     // IS PLAYER ALLOWED
+    public boolean isOwner (OfflinePlayer player) {
+        return player.getUniqueId().toString().equals(ownerUUID);
+    }
     public boolean isTrusted (Player player) {
         if (trusted.containsKey(player.getName())) return true;
         for (String uuid : trusted.values()) {
@@ -57,6 +67,23 @@ public class ProtectionData {
             boolean remaining=tempAdded.get(player.getUniqueId().toString()).hasTimeRemaining();
             if (!remaining) tempAdded.remove(player.getUniqueId().toString());
             return remaining;
+        }
+        return false;
+    }
+
+    public boolean remove (OfflinePlayer player) {
+        if (isOwner(player)) return false;
+        if (added.containsKey(player.getName())) {
+            added.remove(player.getName());
+            return true;
+        }
+        if (trusted.containsKey(player.getName())) {
+            trusted.remove(player.getName());
+            return true;
+        }
+        if (tempAdded.containsKey(player.getUniqueId().toString())) {
+            tempAdded.remove(player.getUniqueId().toString());
+            return true;
         }
         return false;
     }
@@ -131,6 +158,93 @@ public class ProtectionData {
         this.tempAdded = tempAdded;
     }
 
+    public StorageTagCompound toCompound () {
+        StorageTagCompound compound = new StorageTagCompound();
+
+        compound.setString("name", ownerName);
+        compound.setString("uuid", ownerUUID);
+
+
+        if (trusted.isEmpty()) {
+            compound.setString("trusted", Base64Wrapper.encodeString("[]"));
+        }else{
+            JSONArray array = new JSONArray();
+            trusted.forEach((name, uuid) -> {
+                JSONObject json = new JSONObject();
+                json.put("name", name);
+                json.put("uuid", uuid);
+                array.add(json);
+            });
+            compound.setString("trusted", Base64Wrapper.encodeString(array.toJSONString()));
+        }
+
+
+        if (added.isEmpty()) {
+            compound.setString("added", Base64Wrapper.encodeString("[]"));
+        }else{
+            JSONArray array = new JSONArray();
+            added.forEach((name, uuid) -> {
+                JSONObject json = new JSONObject();
+                json.put("name", name);
+                json.put("uuid", uuid);
+                array.add(json);
+            });
+            compound.setString("added", Base64Wrapper.encodeString(array.toJSONString()));
+        }
+
+
+        if (tempAdded.isEmpty()) {
+            compound.setString("temporary", Base64Wrapper.encodeString("[]"));
+        }else{
+            JSONArray array = new JSONArray();
+            tempAdded.forEach((name, info) -> {
+                JSONObject json = new JSONObject();
+                json.put("name", name);
+                json.put("start", info.getStart());
+                json.put("seconds", info.getSeconds());
+                array.add(json);
+            });
+            compound.setString("temporary", Base64Wrapper.encodeString(array.toJSONString()));
+        }
+
+        return compound;
+    }
+
+    public void loadCompound (StorageTagCompound compound) {
+        ownerName = compound.getString("name");
+        ownerUUID = compound.getString("uuid");
+
+        if (compound.hasKey("trusted")) {
+            JSONArray array = StorageMaker.getJSONArray(compound, "trusted");
+            array.forEach(o -> {
+                JSONObject json = (JSONObject) o;
+                trusted.put(String.valueOf(json.get("name")), String.valueOf(json.get("uuid")));
+            });
+        }
+
+        if (compound.hasKey("added")) {
+            JSONArray array = StorageMaker.getJSONArray(compound, "added");
+            array.forEach(o -> {
+                JSONObject json = (JSONObject) o;
+                added.put(String.valueOf(json.get("name")), String.valueOf(json.get("uuid")));
+            });
+        }
+
+        if (compound.hasKey("temporary")) {
+            JSONArray array = StorageMaker.getJSONArray(compound, "temporary");
+            array.forEach(o -> {
+                JSONObject json = (JSONObject) o;
+                String uuid = String.valueOf(json.get("name"));
+                ProtectionData.TimeInfo info = new ProtectionData.TimeInfo();
+                info.setStart(Long.parseLong(String.valueOf(json.get("start"))));
+                info.setSeconds(Integer.parseInt(String.valueOf(json.get("seconds"))));
+                if (info.hasTimeRemaining()) {
+                    tempAdded.put(uuid, info);
+                }
+            });
+        }
+    }
+
     public static class TimeInfo {
         private long start = 0;
         private int seconds = 0;
@@ -155,6 +269,11 @@ public class ProtectionData {
             long seconds = start / 1000L;
             long secondsLeft = (seconds + this.seconds) - (System.currentTimeMillis() / 1000L);
             return (secondsLeft > 0L);
+        }
+
+        public int getRemainingTime () {
+            long seconds = start / 1000L;
+            return (int) ((seconds + this.seconds) - (System.currentTimeMillis() / 1000L));
         }
     }
 }

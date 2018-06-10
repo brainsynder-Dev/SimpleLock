@@ -2,7 +2,6 @@ package lock.brainsynder.utils;
 
 import lock.brainsynder.Core;
 import lock.brainsynder.storage.ProtectionData;
-import lock.brainsynder.storage.StorageMaker;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -10,10 +9,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import simple.brainsynder.nbt.StorageTagCompound;
-import simple.brainsynder.utils.Base64Wrapper;
 
 import java.util.*;
 
@@ -28,106 +24,13 @@ public class ProtectionUtils {
     public static void loadProtection(Core core) {
         core.getStorage().getKeySet().forEach(loc -> {
             ProtectionData data = new ProtectionData();
-            StorageTagCompound compound = core.getStorage().getCompound().getCompoundTag(loc);
-            System.out.println(loc+"Owner UUID: " + compound.getString("uuid"));
-            data.setOwnerName(compound.getString("name"));
-            data.setOwnerUUID(compound.getString("uuid"));
-
-            if (compound.hasKey("trusted")) {
-                JSONArray array = StorageMaker.getJSONArray(compound, "trusted");
-                Map<String, String> trusted = new HashMap<>();
-                array.forEach(o -> {
-                    JSONObject json = (JSONObject) o;
-                    trusted.put(String.valueOf(json.get("name")), String.valueOf(json.get("uuid")));
-                });
-
-                if (!trusted.isEmpty()) data.setTrusted(trusted);
-            }
-
-            if (compound.hasKey("added")) {
-                JSONArray array = StorageMaker.getJSONArray(compound, "added");
-                Map<String, String> added = new HashMap<>();
-                array.forEach(o -> {
-                    JSONObject json = (JSONObject) o;
-                    added.put(String.valueOf(json.get("name")), String.valueOf(json.get("uuid")));
-                });
-
-                if (!added.isEmpty()) data.setAdded(added);
-            }
-
-            if (compound.hasKey("temporary")) {
-                JSONArray array = StorageMaker.getJSONArray(compound, "temporary");
-                Map<String, ProtectionData.TimeInfo> temporary = new HashMap<>();
-                array.forEach(o -> {
-                    JSONObject json = (JSONObject) o;
-                    String uuid = String.valueOf(json.get("name"));
-                    ProtectionData.TimeInfo info = new ProtectionData.TimeInfo();
-                    info.setStart(Long.parseLong(String.valueOf(json.get("start"))));
-                    info.setSeconds(Integer.parseInt(String.valueOf(json.get("seconds"))));
-                    if (info.hasTimeRemaining()) {
-                        temporary.put(uuid, info);
-                    }
-                });
-
-                if (!temporary.isEmpty()) data.setTempAdded(temporary);
-            }
-
+            data.loadCompound(core.getStorage().getCompound().getCompoundTag(loc));
             protectionMap.put(loc, data);
         });
     }
     public static void saveProtections (Core core) {
         StorageTagCompound compound = new StorageTagCompound();
-        protectionMap.forEach((loc, data) ->  {
-            StorageTagCompound inner = new StorageTagCompound();
-
-            inner.setString("name", data.getOwnerName());
-            inner.setString("uuid", data.getOwnerUUID());
-
-
-            if (data.getTrusted().isEmpty()) {
-                inner.setString("trusted", Base64Wrapper.encodeString("[]"));
-            }else{
-                JSONArray array = new JSONArray();
-                data.getTrusted().forEach((name, uuid) -> {
-                    JSONObject json = new JSONObject();
-                    json.put("name", name);
-                    json.put("uuid", uuid);
-                    array.add(json);
-                });
-                inner.setString("trusted", Base64Wrapper.encodeString(array.toJSONString()));
-            }
-
-
-            if (data.getAdded().isEmpty()) {
-                inner.setString("added", Base64Wrapper.encodeString("[]"));
-            }else{
-                JSONArray array = new JSONArray();
-                data.getAdded().forEach((name, uuid) -> {
-                    JSONObject json = new JSONObject();
-                    json.put("name", name);
-                    json.put("uuid", uuid);
-                    array.add(json);
-                });
-                inner.setString("added", Base64Wrapper.encodeString(array.toJSONString()));
-            }
-
-
-            if (data.getTempAdded().isEmpty()) {
-                inner.setString("temporary", Base64Wrapper.encodeString("[]"));
-            }else{
-                JSONArray array = new JSONArray();
-                data.getTempAdded().forEach((name, info) -> {
-                    JSONObject json = new JSONObject();
-                    json.put("name", name);
-                    json.put("start", info.getStart());
-                    json.put("seconds", info.getSeconds());
-                    array.add(json);
-                });
-                inner.setString("temporary", Base64Wrapper.encodeString(array.toJSONString()));
-            }
-            compound.setTag(loc, inner);
-        });
-
+        protectionMap.forEach((loc, data) -> compound.setTag(loc, data.toCompound()));
         core.getStorage().setCompound(compound);
         core.getStorage().save();
     }

@@ -1,13 +1,14 @@
 package lock.brainsynder.utils;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import lock.brainsynder.storage.ProtectionData;
+import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Openable;
 import simple.brainsynder.nms.IActionMessage;
 import simple.brainsynder.utils.Reflection;
 
@@ -37,6 +38,30 @@ public class Utilities {
     public static boolean canMoveBlocks(List<Block> blocks) {
         for (Block block : blocks) {
             if (ProtectionUtils.findProtectionSign(block) != null) return false;
+        }
+        return true;
+    }
+
+    public static boolean canPlaceBlock(Block block, Player player) {
+        switch (block.getType()) {
+            case CHEST:
+            case TRAPPED_CHEST:
+                for (BlockFace face : FACES) {
+                    Block b = block.getRelative(face);
+                    if ((b.getType() == block.getType())) {
+                        Bukkit.broadcastMessage("Is Chest");
+                        Sign sign = ProtectionUtils.hasAttachedSign(b);
+                        if (sign != null) {
+                            Bukkit.broadcastMessage("Is Sign");
+                            ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+                            if (!data.isOwner(player)) {
+                                Bukkit.broadcastMessage("Is not owner");
+                                return false;
+                            }
+                        }
+                    }
+                }
+                break;
         }
         return true;
     }
@@ -128,7 +153,18 @@ public class Utilities {
 
     public static Block getBlock(Player player) {
         List<Block> lastTwoTargetBlocks = player.getLastTwoTargetBlocks(null, 100);
-        Block targetBlock = lastTwoTargetBlocks.get(1);
-        return targetBlock;
+        return lastTwoTargetBlocks.get(1);
+    }
+
+
+    // This will be used when I add in code to open/close both doors
+    // Need to code in the checks for double doors first
+    public static void toggleDoor(Block block, boolean open) {
+        BlockState doorstate = block.getState();
+        Openable openablestate = (Openable) doorstate.getData();
+        openablestate.setOpen(open);
+        doorstate.setData((MaterialData) openablestate);
+        doorstate.update();
+        block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
     }
 }
