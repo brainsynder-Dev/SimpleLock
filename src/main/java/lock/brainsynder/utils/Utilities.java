@@ -158,6 +158,69 @@ public class Utilities {
         return lastTwoTargetBlocks.get(1);
     }
 
+    // Searched the block(s) to check if it is protected
+    public static Map<String, Sign> findSigns(Map<String, Sign> signs, Block block) {
+        // Checks if the block is a protection sign
+        BlockState state = block.getState();
+        if (state instanceof Sign) {
+            signs.put(blockLocToString(block.getLocation()), (Sign) state);
+            org.bukkit.material.Sign sign = (org.bukkit.material.Sign) state.getData();
+            return findSigns(signs, block.getRelative(sign.getAttachedFace()));
+        }
+
+        // Checks if the block has a protection sign on its BlockFaces
+        for (BlockFace face : Utilities.FACES) {
+            Block b = block.getRelative(face);
+            if (b.getState() instanceof Sign) {
+                org.bukkit.material.Sign sign = (org.bukkit.material.Sign) b.getState().getData();
+                if (sign.getAttachedFace() == face.getOppositeFace())
+                    signs.put(blockLocToString(b.getLocation()), (Sign) b.getState());
+            }
+        }
+
+        List<Location> locations = new ArrayList<>();
+
+        // Checks if the block is part of a double chest, If so it will add the locations
+        if (Utilities.isDoubleChest(block)) {
+            DoubleChestInfo info = DoubleChestUtil.getChest(block);
+            locations.add(info.getLocation(Side.LEFT));
+            locations.add(info.getLocation(Side.RIGHT));
+        }
+
+        // Checks if the block is part of a door, If it is it will add the opposite location
+        if (block.getType().name().contains("DOOR") && (!block.getType().name().contains("TRAP"))) {
+            Door door = (Door) block.getState().getData();
+            if (door.isTopHalf()) {
+                locations.add(block.getRelative(BlockFace.DOWN).getLocation());
+            } else {
+                locations.add(block.getRelative(BlockFace.UP).getLocation());
+            }
+        }
+
+        // Checks if the block has a door on top, If so it will add the locations
+        Block bottom = block.getRelative(BlockFace.UP);
+        if (bottom.getType().name().contains("DOOR") && (!bottom.getType().name().contains("TRAP"))) {
+            locations.add(bottom.getLocation());
+            locations.add(bottom.getRelative(BlockFace.UP).getLocation());
+        }
+
+        if (locations.isEmpty()) return signs;
+
+        // Checks if the locations have a protection sign on them
+        for (Location location : locations) {
+            for (BlockFace face : Utilities.FACES) {
+                Block b = location.getBlock().getRelative(face);
+                if (b.getState() instanceof Sign) {
+                    org.bukkit.material.Sign sign = (org.bukkit.material.Sign) b.getState().getData();
+                    if (sign.getAttachedFace() == face.getOppositeFace())
+                        signs.put(blockLocToString(b.getLocation()), (Sign) b.getState());
+                }
+            }
+        }
+
+        return signs;
+    }
+
 
     // This will be used when I add in code to open/close both doors
     // Need to code in the checks for double doors first
