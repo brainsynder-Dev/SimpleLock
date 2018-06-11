@@ -25,9 +25,7 @@ public class Config {
             COULD_NOT_REMOVE = "message.cant-remove-player",
             NOT_PROTECTION_SIGN = "message.not-protection-sign",
             TRANSFER_START = "message.transfer-start",
-            TRANSFER_SUCCESS = "message.transfer-success",
-            NONE_TRANSFERRED = "message.none-transferred",
-            TRANSFER_NO_MEMORY = "message.no-memory-transfer";
+            TRANSFER_SUCCESS = "message.transfer-success";
 
     private File file;
     private FileConfiguration configuration;

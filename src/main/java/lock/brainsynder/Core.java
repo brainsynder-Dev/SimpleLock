@@ -71,9 +71,7 @@ public class Core extends JavaPlugin {
         config.setDefault(Config.COULD_NOT_REMOVE, "&3[&b~&3] &7Could not remove &b{user}");
         config.setDefault(Config.NOT_PROTECTION_SIGN, "&3[&b~&3] &cThat block is not a protection sign.");
         config.setDefault(Config.TRANSFER_START, "&3[&b~&3] &7Starting transfer...");
-        config.setDefault(Config.NONE_TRANSFERRED, "&3[&b~&3] &cNo signs were transferred in the process.");
-        config.setDefault(Config.TRANSFER_SUCCESS, "&3[&b~&3] &7A total of {number} signs were transferred!");
-        config.setDefault(Config.TRANSFER_NO_MEMORY, "&3[&b~&3] &cAn error caused by running out of memory occured - try a smaller radius. Some signs may have been transferred.");
+        config.setDefault(Config.TRANSFER_SUCCESS, "&3[&b~&3] &7Signs were transferred to the new system!");
 
         // Loads the values from the config
         config.getStringList(Config.ALLOWED_BLOCKS).forEach(value -> {
