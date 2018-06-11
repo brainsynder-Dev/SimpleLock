@@ -13,7 +13,7 @@
 - [ ] Friends system (They will always be trusted unless the sign says otherwise)
 	
 ## NEEDED:
-- [ ] A way to transfer Private chests from Lockette/Deadbolt to the new system
+- [x] A way to transfer Private chests from Lockette/Deadbolt to the new system
 	
 ## Commands:
 - [x] /sl add <player>
@@ -21,5 +21,5 @@
 - [x] /sl trust <player>
 - [x] /sl temp <player> <seconds>
 - [x] /sl info
-- [ ] /sl update
+- [x] /sl transfer
 - [ ] /sl debug
