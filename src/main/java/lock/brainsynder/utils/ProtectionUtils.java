@@ -8,7 +8,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import simple.brainsynder.nbt.StorageTagCompound;
 
@@ -61,8 +60,10 @@ public class ProtectionUtils {
         if (player.isOnline()) {
             Utilities.sendActionMessage(player.getPlayer(), "&a&lBlock has been protected");
         }
+    }
 
-
+    public static void registerProtection (String loc, ProtectionData data) {
+        protectionMap.put(loc, data);
     }
 
     public static ProtectionData getProtectionInfo (Sign sign) {
