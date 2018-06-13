@@ -26,8 +26,10 @@ public class StorageMaker extends StorageTagCompound {
             } catch (IOException ignored) {}
         }
         this.compound = new StorageTagCompound();
+        System.out.println(compound);
         try {
             StorageTagCompound compound = CompressedStreamTools.readCompressed(new FileInputStream(file));
+            System.out.println(compound.getKeySet());
             compound.getKeySet().forEach(key -> {
                 this.compound.setTag(key, compound.getTag(key));
             });

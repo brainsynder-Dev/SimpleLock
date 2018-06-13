@@ -103,7 +103,7 @@ public class Transfer extends SubCommand {
                                 data.setOwnerUUID(uuid);
                                 if ((finalLoc != null) && (!finalLoc.isEmpty())) {
                                     sender.sendMessage(core.getConfiguration().getString(Config.TRANSFER_SUCCESS, true));
-                                    ProtectionUtils.registerProtection(finalLoc, data);
+                                    ProtectionUtils.registerProtection(finalLoc, data, core);
                                 }
                             }
                         }.runTask(core);

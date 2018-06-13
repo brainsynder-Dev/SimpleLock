@@ -61,7 +61,7 @@ public class InteractListener implements Listener {
             e.setCancelled(true);
             e.setUseInteractedBlock(Event.Result.DENY);
             e.setUseItemInHand(Event.Result.DENY);
-            ProtectionUtils.registerProtection(player, relative);
+            ProtectionUtils.registerProtection(player, relative, core);
             // Handles the item (decreases/removes it)
             if ((player.getGameMode() == GameMode.CREATIVE) || (player.getGameMode() == GameMode.SPECTATOR)) return;
             if (item.getAmount() == 1) {

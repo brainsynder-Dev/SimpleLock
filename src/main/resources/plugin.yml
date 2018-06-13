@@ -1,3 +1,4 @@
 name: SimpleLock
 main: lock.brainsynder.Core
 version: ${project.version}
+depends: [SimpleAPI]

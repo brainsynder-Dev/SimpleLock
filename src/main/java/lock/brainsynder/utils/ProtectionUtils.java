@@ -22,6 +22,7 @@ public class ProtectionUtils {
 
     // Caches the data from the file
     public static void loadProtection(Core core) {
+        System.out.println(core.getStorage().getKeySet());
         core.getStorage().getKeySet().forEach(loc -> {
             ProtectionData data = new ProtectionData();
             data.loadCompound(core.getStorage().getCompound().getCompoundTag(loc));
@@ -29,10 +30,13 @@ public class ProtectionUtils {
         });
     }
     public static void saveProtections (Core core) {
-        StorageTagCompound compound = new StorageTagCompound();
-        protectionMap.forEach((loc, data) -> compound.setTag(loc, data.toCompound()));
-        core.getStorage().setCompound(compound);
         core.getStorage().save();
+    }
+
+    public static void saveProtection(Core core, String loc, ProtectionData data) {
+        StorageTagCompound compound = core.getStorage().getCompound();
+        compound.setTag(loc, data.toCompound());
+    //    core.getStorage().save();
     }
 
     // Checks if a sign is a 'protection' sign
@@ -51,7 +55,7 @@ public class ProtectionUtils {
     }
 
     // Registers a protection sign
-    public static void registerProtection (OfflinePlayer player, Block sign) {
+    public static void registerProtection(OfflinePlayer player, Block sign, Core core) {
         ProtectionData data = new ProtectionData();
         data.setOwnerName(player.getName());
         data.setOwnerUUID(player.getUniqueId().toString());
@@ -60,10 +64,12 @@ public class ProtectionUtils {
         if (player.isOnline()) {
             Utilities.sendActionMessage(player.getPlayer(), "&a&lBlock has been protected");
         }
+        saveProtection(core, Utilities.blockLocToString(sign.getLocation()), data);
     }
 
-    public static void registerProtection (String loc, ProtectionData data) {
+    public static void registerProtection(String loc, ProtectionData data, Core core) {
         protectionMap.put(loc, data);
+        saveProtection(core, loc, data);
     }
 
     public static ProtectionData getProtectionInfo (Sign sign) {
