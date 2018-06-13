@@ -22,7 +22,6 @@ public class ProtectionUtils {
 
     // Caches the data from the file
     public static void loadProtection(Core core) {
-        System.out.println(core.getStorage().getKeySet());
         core.getStorage().getKeySet().forEach(loc -> {
             ProtectionData data = new ProtectionData();
             data.loadCompound(core.getStorage().getCompound().getCompoundTag(loc));
