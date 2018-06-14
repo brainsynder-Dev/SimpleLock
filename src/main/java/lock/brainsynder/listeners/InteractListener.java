@@ -13,6 +13,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -73,11 +74,15 @@ public class InteractListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void tryClick (PlayerInteractEvent e) {
         if (e.getAction().name().contains("RIGHT")) return;
-        // error
-        if (e.getPlayer().isSneaking() && (!e.getItem().getType().name().contains("SIGN"))) return;
+
+        if (e.getPlayer().isSneaking()){
+            if (e.getItem() != null) {
+                if (!e.getItem().getType().name().contains("SIGN")) return;
+            }
+        }
         Block block = e.getClickedBlock();
         if (block == null) return;
         Sign sign = ProtectionUtils.findProtectionSign(block);
