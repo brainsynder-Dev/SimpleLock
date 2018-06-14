@@ -5,6 +5,7 @@ import lock.brainsynder.commands.TestCommand;
 import lock.brainsynder.commands.api.CommandRegistry;
 import lock.brainsynder.listeners.BlockListener;
 import lock.brainsynder.listeners.InteractListener;
+import lock.brainsynder.listeners.InventoryListener;
 import lock.brainsynder.storage.Config;
 import lock.brainsynder.storage.StorageMaker;
 import lock.brainsynder.utils.ProtectionUtils;
@@ -30,6 +31,7 @@ public class Core extends JavaPlugin {
         ProtectionUtils.loadProtection(this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new InteractListener(this), this);
+        getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 
         // Command registering
         CommandRegistry registry = new CommandRegistry(this);
