@@ -1,9 +1,10 @@
 package lock.brainsynder.listeners;
 
+import lock.brainsynder.storage.ProtectionData;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,8 +14,6 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryType;
 
 import java.util.List;
 
@@ -55,11 +54,12 @@ public class BlockListener implements Listener {
     }
 
     @EventHandler
-    public void onHopperRemoveItem(InventoryMoveItemEvent e) {
-        if (e.getSource().getType() != InventoryType.CHEST) return;
-        Location loc = e.getSource().getLocation();
-        if (ProtectionUtils.hasAttachedSign(loc.getWorld().getBlockAt(loc)) != null) {
-            e.setCancelled(true);
+    public void onBlockRedstoneChange(BlockRedstoneEvent e) {
+        Block block = e.getBlock();
+        Sign sign = ProtectionUtils.findProtectionSign(block);
+        if (sign != null) {
+            ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+            if (!data.canAllowRedstone()) e.setNewCurrent(e.getOldCurrent());
         }
     }
 }
