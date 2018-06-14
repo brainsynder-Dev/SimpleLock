@@ -125,6 +125,15 @@ public class ProtectionData {
 
 
     /* GETTERS */
+    public boolean canAllowFriends() {
+        return allowFriends;
+    }
+    public boolean canAllowHoppers() {
+        return allowHoppers;
+    }
+    public boolean canAllowRedstone() {
+        return allowRedstone;
+    }
     public Map<String, TimeInfo> getTempAdded() {
         return tempAdded;
     }
