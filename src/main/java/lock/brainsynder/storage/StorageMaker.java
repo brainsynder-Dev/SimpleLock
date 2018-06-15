@@ -14,7 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Set;
 
-public class StorageMaker extends StorageTagCompound {
+public class StorageMaker  {
     private File file;
     private StorageTagCompound compound;
 
@@ -38,7 +38,6 @@ public class StorageMaker extends StorageTagCompound {
         this.file = file;
     }
 
-    @Override
     public Set<String> getKeySet() {
         return this.compound.getKeySet();
     }
@@ -67,7 +66,7 @@ public class StorageMaker extends StorageTagCompound {
     }
 
     public JSONArray getJSONArray (String key) {
-        if (hasKey(key)) {
+        if (this.compound.hasKey(key)) {
             try {
                 return (JSONArray) JSONValue.parseWithException(Base64Wrapper.decodeString(this.compound.getString(key)));
             } catch (ParseException ignored) {}
@@ -77,7 +76,7 @@ public class StorageMaker extends StorageTagCompound {
     }
 
     public JSONObject getJSONObject (String key) {
-        if (hasKey(key)) {
+        if (this.compound.hasKey(key)) {
             try {
                 return (JSONObject) JSONValue.parseWithException(Base64Wrapper.decodeString(this.compound.getString(key)));
             } catch (ParseException ignored) {}
