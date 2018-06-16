@@ -4,8 +4,9 @@ public enum ConfigValues {
     ALLOWED_BLOCKS ("allowed-blocks"),
     PLAYER_NOT_FOUND ("message.player-not-found"),
     NOT_PROTECTED ("message.not-protected"),
-    TRANSFER_START ("message.player-not-found"),
-    TRANSFER_SUCCESSFUL ("message.player-not-found"),
+    TRANSFER_START ("message.transfer.start"),
+    TRANSFER_SUCCESSFUL ("message.transfer.successfully"),
+    TRANSFER_FAILED ("message.transfer.failed"),
 
     PLAYER_ADDED_SUCCESSFUL ("message.player-added.successfully"),
     PLAYER_ADDED_FAILED ("message.player-added.failed"),
@@ -21,9 +22,7 @@ public enum ConfigValues {
 
     PLAYER_REMOVE_SUCCESSFUL ("message.player-remove.successfully"),
     PLAYER_REMOVE_FAILED ("message.player-remove.failed"),
-    PLAYER_REMOVE_MISSING ("message.player-remove.missing"),
-
-    A ("");
+    PLAYER_REMOVE_MISSING ("message.player-remove.missing");
 
     private String path;
     ConfigValues (String path) {
