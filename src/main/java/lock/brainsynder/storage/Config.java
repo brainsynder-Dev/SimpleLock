@@ -13,20 +13,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class Config {
-    public static String ALLOWED_BLOCKS = "allowed-blocks",
-            PLAYER_NOT_FOUND = "message.player-not-found",
-            PLAYER_ADDED = "message.add-player",
-            PLAYER_ALREADY_ADDED = "message.player-already-added",
-            PLAYER_TRUSTED = "message.player-trusted",
-            PLAYER_ALREADY_TRUSTED = "message.player-already-trusted",
-            PLAYER_TEMP = "message.player-temp-added",
-            PLAYER_ALREADY_TEMP = "message.player-already-temp",
-            PLAYER_REMOVED = "message.player-removed",
-            COULD_NOT_REMOVE = "message.cant-remove-player",
-            NOT_PROTECTION_SIGN = "message.not-protection-sign",
-            TRANSFER_START = "message.transfer-start",
-            TRANSFER_SUCCESS = "message.transfer-success";
-
     private File file;
     private FileConfiguration configuration;
 
