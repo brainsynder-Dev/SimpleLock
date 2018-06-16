@@ -68,6 +68,7 @@ public class Core extends JavaPlugin {
         config.setDefault(ConfigValues.NOT_PROTECTED, "&4[&c~&4] &cThat block is not protected.");
         config.setDefault(ConfigValues.TRANSFER_START, "&3[&b~&3] &7Starting transfer...");
         config.setDefault(ConfigValues.TRANSFER_SUCCESSFUL, "&2[&a~&2] &7Block was successfully transferred to the new system!");
+        config.setDefault(ConfigValues.TRANSFER_FAILED, "&4[&c~&4] &7Could not find any block to transfer");
 
         config.setDefault(ConfigValues.PLAYER_ADDED_SUCCESSFUL, "&2[&a~&2] &a{user} &7has been added");
         config.setDefault(ConfigValues.PLAYER_ADDED_EXISTING, "&3[&b~&3] &b{user} &7is already added");
