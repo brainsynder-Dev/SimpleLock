@@ -71,6 +71,7 @@ public class Temp extends SubCommand {
         }catch (NumberFormatException e){
             return;
         }
+        if (seconds < 1) seconds = 1;
 
         Sign sign = (Sign) block.getState();
         IProtection data = ProtectionUtils.getProtectionInfo(sign);
