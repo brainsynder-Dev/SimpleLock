@@ -1,10 +1,10 @@
 package lock.brainsynder.commands.lock;
 
 import lock.brainsynder.Core;
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.commands.api.SubCommand;
 import lock.brainsynder.commands.api.annotations.ICommand;
-import lock.brainsynder.storage.Config;
-import lock.brainsynder.storage.ProtectionData;
+import lock.brainsynder.storage.ConfigValues;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
 import org.bukkit.Bukkit;
@@ -37,7 +37,7 @@ public class Add extends SubCommand {
         Player player = (Player) sender;
         Block block = Utilities.getBlock(player);
         if (!ProtectionUtils.isProtectionSign(block)) {
-            player.sendMessage(core.getConfiguration().getString(Config.NOT_PROTECTION_SIGN, true));
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.NOT_PROTECTED, true));
             return;
         }
 
@@ -54,17 +54,20 @@ public class Add extends SubCommand {
         }
 
         if (offline == null) {
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_NOT_FOUND, true).replace("{user}", name));
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.PLAYER_NOT_FOUND, true).replace("{user}", name));
             return;
         }
 
 
         Sign sign = (Sign) block.getState();
-        ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
-        if (!data.addPlayer(offline)) {
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_ALREADY_ADDED, true).replace("{user}", name));
+        IProtection data = ProtectionUtils.getProtectionInfo(sign);
+        IProtection.ReturnResult result = data.addPlayer(offline);
+        if (result == IProtection.ReturnResult.ALREADY_EXISTING) {
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.PLAYER_ADDED_EXISTING, true).replace("{user}", name));
+        }else if (result == IProtection.ReturnResult.FAILED) {
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.PLAYER_ADDED_FAILED, true).replace("{user}", name));
         }else{
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_ADDED, true).replace("{user}", name));
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.PLAYER_ADDED_SUCCESSFUL, true).replace("{user}", name));
         }
     }
 }

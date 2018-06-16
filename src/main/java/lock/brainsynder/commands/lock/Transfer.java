@@ -1,9 +1,10 @@
 package lock.brainsynder.commands.lock;
 
 import lock.brainsynder.Core;
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.commands.api.SubCommand;
 import lock.brainsynder.commands.api.annotations.ICommand;
-import lock.brainsynder.storage.Config;
+import lock.brainsynder.storage.ConfigValues;
 import lock.brainsynder.storage.ProtectionData;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
@@ -42,12 +43,12 @@ public class Transfer extends SubCommand {
         Block block = Utilities.getBlock(player);
 
         if ((block == null) || (block.getType() == Material.AIR)) {
-            player.sendMessage(core.getConfiguration().getString(Config.NOT_PROTECTION_SIGN, true));
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.NOT_PROTECTED, true));
             return;
         }
 
-        sender.sendMessage(core.getConfiguration().getString(Config.TRANSFER_START, true));
-        ProtectionData data = new ProtectionData();
+        sender.sendMessage(core.getConfiguration().getString(ConfigValues.TRANSFER_START, true));
+        IProtection data = new ProtectionData();
         String owner = "", loc = "";
         for (Sign sign: Utilities.findSigns(new HashMap<>(), block).values()) {
             String[] lines = sign.getLines();
@@ -102,7 +103,7 @@ public class Transfer extends SubCommand {
                                 data.setOwnerName(name);
                                 data.setOwnerUUID(uuid);
                                 if ((finalLoc != null) && (!finalLoc.isEmpty())) {
-                                    sender.sendMessage(core.getConfiguration().getString(Config.TRANSFER_SUCCESS, true));
+                                    sender.sendMessage(core.getConfiguration().getString(ConfigValues.TRANSFER_SUCCESSFUL, true));
                                     ProtectionUtils.registerProtection(finalLoc, data, core);
                                 }
                             }

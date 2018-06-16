@@ -1,10 +1,10 @@
 package lock.brainsynder.commands.lock;
 
 import lock.brainsynder.Core;
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.commands.api.SubCommand;
 import lock.brainsynder.commands.api.annotations.ICommand;
-import lock.brainsynder.storage.Config;
-import lock.brainsynder.storage.ProtectionData;
+import lock.brainsynder.storage.ConfigValues;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
 import org.bukkit.Bukkit;
@@ -37,7 +37,7 @@ public class Remove extends SubCommand {
         Player player = (Player) sender;
         Block block = Utilities.getBlock(player);
         if (!ProtectionUtils.isProtectionSign(block)) {
-            player.sendMessage(core.getConfiguration().getString(Config.NOT_PROTECTION_SIGN, true));
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.NOT_PROTECTED, true));
             return;
         }
 
@@ -54,17 +54,20 @@ public class Remove extends SubCommand {
         }
 
         if (offline == null) {
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_NOT_FOUND, true).replace("{user}", name));
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.PLAYER_NOT_FOUND, true).replace("{user}", name));
             return;
         }
 
 
         Sign sign = (Sign) block.getState();
-        ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
-        if (!data.remove(offline)) {
-            player.sendMessage(core.getConfiguration().getString(Config.COULD_NOT_REMOVE, true).replace("{user}", name));
+        IProtection data = ProtectionUtils.getProtectionInfo(sign);
+        IProtection.ReturnResult result = data.remove(offline);
+        if (result == IProtection.ReturnResult.MISSING) {
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.PLAYER_REMOVE_MISSING, true).replace("{user}", name));
+        }else if (result == IProtection.ReturnResult.FAILED) {
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.PLAYER_REMOVE_FAILED, true).replace("{user}", name));
         }else{
-            player.sendMessage(core.getConfiguration().getString(Config.PLAYER_REMOVED, true).replace("{user}", name));
+            player.sendMessage(core.getConfiguration().getString(ConfigValues.PLAYER_REMOVE_SUCCESSFUL, true).replace("{user}", name));
         }
     }
 }

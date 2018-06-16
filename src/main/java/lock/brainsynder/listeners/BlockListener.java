@@ -1,6 +1,6 @@
 package lock.brainsynder.listeners;
 
-import lock.brainsynder.storage.ProtectionData;
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
 import org.bukkit.block.Block;
@@ -58,7 +58,7 @@ public class BlockListener implements Listener {
         Block block = e.getBlock();
         Sign sign = ProtectionUtils.findProtectionSign(block);
         if (sign != null) {
-            ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+            IProtection data = ProtectionUtils.getProtectionInfo(sign);
             if (!data.canAllowRedstone()) e.setNewCurrent(e.getOldCurrent());
         }
     }

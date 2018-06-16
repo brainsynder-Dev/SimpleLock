@@ -1,7 +1,7 @@
 package lock.brainsynder.listeners;
 
 import lock.brainsynder.Core;
-import lock.brainsynder.storage.ProtectionData;
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
 import org.bukkit.Bukkit;
@@ -87,9 +87,9 @@ public class InteractListener implements Listener {
         if (block == null) return;
         Sign sign = ProtectionUtils.findProtectionSign(block);
         if (sign == null) return;
-        ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+        IProtection data = ProtectionUtils.getProtectionInfo(sign);
         if (data == null) return;
-        if ((!data.getOwnerUUID().equals(e.getPlayer().getUniqueId().toString()))) {
+        if (!data.isOwner(e.getPlayer())) {
             if (data.isPlayerAllowed(e.getPlayer())) return;
             e.setCancelled(true);
             e.setUseInteractedBlock(Event.Result.DENY);
@@ -107,16 +107,16 @@ public class InteractListener implements Listener {
             if (protect == null) return; // Is not protected
 
             // block is protected
-            ProtectionData data = ProtectionUtils.getProtectionInfo(protect);
+            IProtection data = ProtectionUtils.getProtectionInfo(protect);
             if (data == null) return;
-            if (!data.getOwnerUUID().equals(e.getPlayer().getUniqueId().toString())) {
+            if (!data.isOwner(e.getPlayer())) {
                 e.setCancelled(true);
             }
             return;
         }
-        ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+        IProtection data = ProtectionUtils.getProtectionInfo(sign);
         if (data == null) return;
-        if (!data.getOwnerUUID().equals(e.getPlayer().getUniqueId().toString())) {
+        if (!data.isOwner(e.getPlayer())) {
             e.setCancelled(true);
             return;
         }

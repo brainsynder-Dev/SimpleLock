@@ -40,40 +40,40 @@ public class Config {
         this.configuration = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void setDefault(String key, Object value) {
-        if (!isSet(key)) set(key, value);
+    public void setDefault(ConfigValues cv, Object value) {
+        if (!isSet(cv)) set(cv, value);
     }
 
-    public String getString(String tag, boolean color) {
+    public String getString(ConfigValues cv, boolean color) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        String value = configuration.getString(tag);
+        String value = configuration.getString(cv.getPath());
         if (value == null) return "";
         return (color ? translate(value) : value);
     }
 
-    public String getString(String tag) {
+    public String getString(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return this.configuration.get(tag) != null ? this.configuration.getString(tag) : tag;
+        return this.configuration.get(cv.getPath()) != null ? this.configuration.getString(cv.getPath()) : cv.getPath();
     }
 
-    public ItemStack getItemStack(String tag) {
+    public ItemStack getItemStack(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return this.configuration.getItemStack(tag);
+        return this.configuration.getItemStack(cv.getPath());
     }
 
-    public boolean getBoolean(String tag) {
+    public boolean getBoolean(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return this.configuration.get(tag) != null && this.configuration.getBoolean(tag);
+        return this.configuration.get(cv.getPath()) != null && this.configuration.getBoolean(cv.getPath());
     }
 
-    public int getInt(String tag) {
+    public int getInt(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return this.configuration.get(tag) != null ? this.configuration.getInt(tag) : 0;
+        return this.configuration.get(cv.getPath()) != null ? this.configuration.getInt(cv.getPath()) : 0;
     }
 
-    public double getDouble(String tag) {
+    public double getDouble(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return this.configuration.get(tag) != null ? this.configuration.getDouble(tag) : 0.0D;
+        return this.configuration.get(cv.getPath()) != null ? this.configuration.getDouble(cv.getPath()) : 0.0D;
     }
 
     public Set<String> getKeys(boolean tag) {
@@ -81,39 +81,38 @@ public class Config {
         return this.configuration.getKeys(tag);
     }
 
-    public List<String> getStringList(String tag) {
+    public List<String> getStringList(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return (List) (this.isSet(tag) ? this.configuration.getStringList(tag) : new ArrayList());
+        return (List) (this.isSet(cv) ? this.configuration.getStringList(cv.getPath()) : new ArrayList());
     }
 
-    public IStorage<String> getStorageList(String tag) {
-        return (IStorage<String>) new StorageList(this.getStringList(tag));
+    public IStorage<String> getStorageList(ConfigValues cv) {
+        return (IStorage<String>) new StorageList(this.getStringList(cv));
     }
 
-    public boolean isSet(String tag) {
+    public boolean isSet(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return this.configuration.get(tag) != null;
+        return this.configuration.get(cv.getPath()) != null;
     }
 
-    public ConfigurationSection getSection(String tag) {
+    public ConfigurationSection getSection(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return this.configuration.getConfigurationSection(tag);
+        return this.configuration.getConfigurationSection(cv.getPath());
     }
 
-    public Object get(String tag) {
+    public Object get(ConfigValues cv) {
         this.configuration = YamlConfiguration.loadConfiguration(file);
-        return this.configuration.get(tag);
+        return this.configuration.get(cv.getPath());
     }
 
     private String translate(String msg) {
         return msg.replace("&", "§");
     }
 
-    public void set(String tag, Object data) {
-        configuration.set(tag, data);
+    public void set(ConfigValues cv, Object data) {
+        configuration.set(cv.getPath(), data);
         try {
             configuration.save(file);
-            //this.simpleConfig.reloadConfig();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,16 +140,5 @@ public class Config {
 
             return map;
         }
-    }
-
-    public void set(boolean checkNull, String tag, Object data) {
-        if (checkNull) {
-            if (!this.isSet(tag)) {
-                this.set(tag, data);
-            }
-        } else {
-            this.set(tag, data);
-        }
-
     }
 }

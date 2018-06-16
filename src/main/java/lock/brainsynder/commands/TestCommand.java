@@ -1,8 +1,8 @@
 package lock.brainsynder.commands;
 
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.commands.api.ParentCommand;
 import lock.brainsynder.commands.api.annotations.ICommand;
-import lock.brainsynder.storage.ProtectionData;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
 import org.bukkit.block.Block;
@@ -31,7 +31,7 @@ public class TestCommand extends ParentCommand {
 
             if (ProtectionUtils.isProtectionSign(block)) {
                 Sign sign = (Sign) block.getState();
-                ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+                IProtection data = ProtectionUtils.getProtectionInfo(sign);
                 data.setOwnerName(name);
                 data.setOwnerUUID(UUID.randomUUID().toString());
                 Utilities.updateSign(sign, "[Private]", name);

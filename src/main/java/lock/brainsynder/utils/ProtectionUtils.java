@@ -1,6 +1,7 @@
 package lock.brainsynder.utils;
 
 import lock.brainsynder.Core;
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.storage.ProtectionData;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,12 +19,12 @@ public class ProtectionUtils {
             Material.ACACIA_DOOR, Material.BIRCH_DOOR, Material.DARK_OAK_DOOR,
             Material.IRON_DOOR, Material.JUNGLE_DOOR, Material.SPRUCE_DOOR,
             Material.WOOD_DOOR);
-    private static Map<String, ProtectionData> protectionMap = new HashMap<>();
+    private static Map<String, IProtection> protectionMap = new HashMap<>();
 
     // Caches the data from the file
     public static void loadProtection(Core core) {
         core.getStorage().getKeySet().forEach(loc -> {
-            ProtectionData data = new ProtectionData();
+            IProtection data = new ProtectionData();
             data.loadCompound(core.getStorage().getCompound().getCompoundTag(loc));
             protectionMap.put(loc, data);
         });
@@ -32,7 +33,7 @@ public class ProtectionUtils {
         core.getStorage().save();
     }
 
-    public static void saveProtection(Core core, String loc, ProtectionData data) {
+    public static void saveProtection(Core core, String loc, IProtection data) {
         StorageTagCompound compound = core.getStorage().getCompound();
         compound.setTag(loc, data.toCompound());
     //    core.getStorage().save();
@@ -55,7 +56,7 @@ public class ProtectionUtils {
 
     // Registers a protection sign
     public static void registerProtection(OfflinePlayer player, Block sign, Core core) {
-        ProtectionData data = new ProtectionData();
+        IProtection data = new ProtectionData();
         data.setOwnerName(player.getName());
         data.setOwnerUUID(player.getUniqueId().toString());
 
@@ -66,12 +67,12 @@ public class ProtectionUtils {
         saveProtection(core, Utilities.blockLocToString(sign.getLocation()), data);
     }
 
-    public static void registerProtection(String loc, ProtectionData data, Core core) {
+    public static void registerProtection(String loc, IProtection data, Core core) {
         protectionMap.put(loc, data);
         saveProtection(core, loc, data);
     }
 
-    public static ProtectionData getProtectionInfo (Sign sign) {
+    public static IProtection getProtectionInfo (Sign sign) {
         String loc = Utilities.blockLocToString(sign.getLocation());
         if (protectionMap.containsKey(loc)) return protectionMap.get(loc);
         return null;

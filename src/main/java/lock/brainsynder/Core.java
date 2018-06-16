@@ -7,6 +7,7 @@ import lock.brainsynder.listeners.BlockListener;
 import lock.brainsynder.listeners.InteractListener;
 import lock.brainsynder.listeners.InventoryListener;
 import lock.brainsynder.storage.Config;
+import lock.brainsynder.storage.ConfigValues;
 import lock.brainsynder.storage.StorageMaker;
 import lock.brainsynder.utils.ProtectionUtils;
 import org.bukkit.Material;
@@ -49,7 +50,7 @@ public class Core extends JavaPlugin {
                 "~  means contains ",
                 "Example '~CHEST' would be ENDER_CHEST, TRAPPED_CHEST, and CHEST"
         );
-        config.setDefault(Config.ALLOWED_BLOCKS, Arrays.asList(
+        config.setDefault(ConfigValues.ALLOWED_BLOCKS, Arrays.asList(
                 "~CHEST",
                 "~DOOR",
                 "~FURNACE",
@@ -62,21 +63,30 @@ public class Core extends JavaPlugin {
                 "DISPENSER",
                 "ENCHANTMENT_TABLE"
         ));
-        config.setDefault(Config.PLAYER_NOT_FOUND, "&3[&b~&3] &c{user} &7could not be found (correct spelling?).");
-        config.setDefault(Config.PLAYER_ADDED, "&3[&b~&3] &b{user} &7has been added");
-        config.setDefault(Config.PLAYER_ALREADY_ADDED, "&3[&b~&3] &b{user} &7is already added");
-        config.setDefault(Config.PLAYER_TEMP, "&3[&b~&3] &b{user} &7has been temporarily added for &b{seconds} &7second(s)");
-        config.setDefault(Config.PLAYER_ALREADY_TEMP, "&3[&b~&3] &b{user} &7is already temporarily added");
-        config.setDefault(Config.PLAYER_TRUSTED, "&3[&b~&3] &b{user} &7has been trusted");
-        config.setDefault(Config.PLAYER_ALREADY_TRUSTED, "&3[&b~&3] &b{user} &7is already trusted");
-        config.setDefault(Config.PLAYER_REMOVED, "&3[&b~&3] &b{user} &7has been removed");
-        config.setDefault(Config.COULD_NOT_REMOVE, "&3[&b~&3] &7Could not remove &b{user}");
-        config.setDefault(Config.NOT_PROTECTION_SIGN, "&3[&b~&3] &cThat block is not a protection sign.");
-        config.setDefault(Config.TRANSFER_START, "&3[&b~&3] &7Starting transfer...");
-        config.setDefault(Config.TRANSFER_SUCCESS, "&3[&b~&3] &7Signs were transferred to the new system!");
+
+        config.setDefault(ConfigValues.PLAYER_NOT_FOUND, "&4[&c~&4] &c{user} &7could not be found (correct spelling?).");
+        config.setDefault(ConfigValues.NOT_PROTECTED, "&4[&c~&4] &cThat block is not protected.");
+        config.setDefault(ConfigValues.TRANSFER_START, "&3[&b~&3] &7Starting transfer...");
+        config.setDefault(ConfigValues.TRANSFER_SUCCESSFUL, "&2[&a~&2] &7Block was successfully transferred to the new system!");
+
+        config.setDefault(ConfigValues.PLAYER_ADDED_SUCCESSFUL, "&2[&a~&2] &a{user} &7has been added");
+        config.setDefault(ConfigValues.PLAYER_ADDED_EXISTING, "&3[&b~&3] &b{user} &7is already added");
+        config.setDefault(ConfigValues.PLAYER_ADDED_FAILED, "&4[&c~&4] &c{user} &7couldn't be added because they own the block");
+
+        config.setDefault(ConfigValues.PLAYER_TEMP_SUCCESSFUL, "&2[&a~&2] &a{user} &7has been temporarily added for &a{seconds} &7second(s)");
+        config.setDefault(ConfigValues.PLAYER_TEMP_EXISTING, "&3[&b~&3] &b{user} &7is already temporarily added");
+        config.setDefault(ConfigValues.PLAYER_TEMP_FAILED, "&4[&c~&4] &c{user} &7couldn't be temporarily added because they own the block");
+
+        config.setDefault(ConfigValues.PLAYER_TRUSTED_SUCCESSFUL, "&2[&a~&2] &a{user} &7has been trusted");
+        config.setDefault(ConfigValues.PLAYER_TRUSTED_EXISTING, "&3[&b~&3] &b{user} &7is already trusted");
+        config.setDefault(ConfigValues.PLAYER_TRUSTED_FAILED, "&4[&c~&4] &c{user} &7couldn't be trusted because they own the block");
+
+        config.setDefault(ConfigValues.PLAYER_REMOVE_SUCCESSFUL, "&2[&a~&2] &a{user} &7has been removed");
+        config.setDefault(ConfigValues.PLAYER_REMOVE_MISSING, "&4[&c~&4] &c{user} &7isn't added/trusted to this block");
+        config.setDefault(ConfigValues.PLAYER_REMOVE_FAILED, "&4[&c~&4] &c{user} &7couldn't be removed because they own the block");
 
         // Loads the values from the config
-        config.getStringList(Config.ALLOWED_BLOCKS).forEach(value -> {
+        config.getStringList(ConfigValues.ALLOWED_BLOCKS).forEach(value -> {
             value = value.toUpperCase();
             if (!value.startsWith("~")) {
                 try {

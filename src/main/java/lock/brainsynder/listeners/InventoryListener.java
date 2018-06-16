@@ -1,6 +1,6 @@
 package lock.brainsynder.listeners;
 
-import lock.brainsynder.storage.ProtectionData;
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
 import org.bukkit.Location;
@@ -45,7 +45,7 @@ public class InventoryListener implements Listener {
         Location loc = e.getSource().getLocation();
         Sign sign = ProtectionUtils.findProtectionSign(loc.getWorld().getBlockAt(loc));
         if (sign != null) {
-            ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+            IProtection data = ProtectionUtils.getProtectionInfo(sign);
             if (!data.canAllowHoppers()) e.setCancelled(true);
         }
     }

@@ -1,10 +1,10 @@
 package lock.brainsynder.commands.lock;
 
 import lock.brainsynder.Core;
+import lock.brainsynder.api.IProtection;
 import lock.brainsynder.commands.api.SubCommand;
 import lock.brainsynder.commands.api.annotations.ICommand;
 import lock.brainsynder.storage.Config;
-import lock.brainsynder.storage.ProtectionData;
 import lock.brainsynder.utils.ProtectionUtils;
 import lock.brainsynder.utils.Utilities;
 import org.bukkit.Bukkit;
@@ -39,7 +39,7 @@ public class Info extends SubCommand {
         }
 
         Sign sign = (Sign) block.getState();
-        ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+        IProtection data = ProtectionUtils.getProtectionInfo(sign);
 
         player.sendMessage("Owner: " + data.getOwnerName());
         player.sendMessage("Are You Allowed: " + data.isPlayerAllowed(player));

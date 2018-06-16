@@ -1,5 +1,7 @@
 package lock.brainsynder.storage;
 
+import lock.brainsynder.api.IProtection;
+import lock.brainsynder.api.TimeInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -12,26 +14,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-// Data that will be stored for a protected block
-public class ProtectionData {
+public class ProtectionData implements IProtection {
     private String ownerName;
     private String ownerUUID;
     private boolean allowHoppers = false;
     private boolean allowRedstone = false;
     private boolean allowFriends = false;
-
-    // A collection of names/UUIDs of players that can
-    // access the block when the owner is offline
     private Map<String, String> trusted = new HashMap<>();
-
-    // A collection of names/UUIDs of players that can
-    // only access the block when the owner is online
     private Map<String, String> added = new HashMap<>();
-
-    // A collection of UUIDs that are temporarily able to access/use the block
     private Map<String, TimeInfo> tempAdded = new HashMap<> ();
 
-    public boolean isPlayerAllowed (Player player) {
+
+    @Override
+    public boolean isPlayerAllowed(Player player) {
         if (player.getUniqueId().toString().equals(ownerUUID)) return true;
         if (isTrusted(player)) return true;
         if (isAdded(player) || isTemporary(player)) {
@@ -42,11 +37,13 @@ public class ProtectionData {
         return false;
     }
 
-    // IS PLAYER ALLOWED
-    public boolean isOwner (OfflinePlayer player) {
+    @Override
+    public boolean isOwner(OfflinePlayer player) {
         return player.getUniqueId().toString().equals(ownerUUID);
     }
-    public boolean isTrusted (Player player) {
+
+    @Override
+    public boolean isTrusted(OfflinePlayer player) {
         if (trusted.containsKey(player.getName())) return true;
         for (String uuid : trusted.values()) {
             if (uuid.equals(player.getUniqueId().toString())) return true;
@@ -54,7 +51,9 @@ public class ProtectionData {
 
         return false;
     }
-    public boolean isAdded (Player player) {
+
+    @Override
+    public boolean isAdded(OfflinePlayer player) {
         if (added.containsKey(player.getName())) return true;
         for (String uuid : added.values()) {
             if (uuid.equals(player.getUniqueId().toString())) return true;
@@ -62,7 +61,9 @@ public class ProtectionData {
 
         return false;
     }
-    public boolean isTemporary (Player player) {
+
+    @Override
+    public boolean isTemporary(OfflinePlayer player) {
         if (tempAdded.containsKey(player.getUniqueId().toString())) {
             boolean remaining=tempAdded.get(player.getUniqueId().toString()).hasTimeRemaining();
             if (!remaining) tempAdded.remove(player.getUniqueId().toString());
@@ -71,46 +72,55 @@ public class ProtectionData {
         return false;
     }
 
-    public boolean remove (OfflinePlayer player) {
-        if (isOwner(player)) return false;
+    @Override
+    public ReturnResult remove(OfflinePlayer player) {
+        if (isOwner(player)) return ReturnResult.FAILED;
         if (added.containsKey(player.getName())) {
             added.remove(player.getName());
-            return true;
+            return ReturnResult.SUCCEDED;
         }
         if (trusted.containsKey(player.getName())) {
             trusted.remove(player.getName());
-            return true;
+            return ReturnResult.SUCCEDED;
         }
         if (tempAdded.containsKey(player.getUniqueId().toString())) {
             tempAdded.remove(player.getUniqueId().toString());
-            return true;
+            return ReturnResult.SUCCEDED;
         }
-        return false;
+        return ReturnResult.MISSING;
     }
 
-    // ADD PLAYERS
-    public boolean addTrusted (OfflinePlayer player) {
-        if (trusted.containsKey(player.getName())) return false;
+    @Override
+    public ReturnResult addTrusted(OfflinePlayer player) {
+        if (isOwner(player)) return ReturnResult.FAILED;
+        if (trusted.containsKey(player.getName())) return ReturnResult.ALREADY_EXISTING;
 
         // Clean up user if they are already added
         added.remove(player.getName());
         tempAdded.remove(player.getUniqueId().toString());
 
         trusted.put(player.getName(), player.getUniqueId().toString());
-        return true;
+        return ReturnResult.SUCCEDED;
     }
-    public boolean addPlayer (OfflinePlayer player) {
-        if (added.containsKey(player.getName())) return false;
+
+    @Override
+    public ReturnResult addPlayer(OfflinePlayer player) {
+        if (isOwner(player)) return ReturnResult.FAILED;
+        if (added.containsKey(player.getName())) return ReturnResult.ALREADY_EXISTING;
 
         // Clean up user if they are already added
         trusted.remove(player.getName());
         tempAdded.remove(player.getUniqueId().toString());
 
         added.put(player.getName(), player.getUniqueId().toString());
-        return true;
+        return ReturnResult.SUCCEDED;
     }
-    public boolean addTemporary (OfflinePlayer player, int seconds) {
-        if (tempAdded.containsKey(player.getUniqueId().toString())) return false;
+
+    @Override
+    public ReturnResult addTemporary(OfflinePlayer player, int seconds) {
+        if (isOwner(player)) return ReturnResult.FAILED;
+        String uuid = player.getUniqueId().toString();
+        if (isTemporary(player)) return ReturnResult.ALREADY_EXISTING;
 
         // Clean up user if they are already added
         added.remove(player.getName());
@@ -119,60 +129,81 @@ public class ProtectionData {
         TimeInfo info = new TimeInfo();
         info.setSeconds(seconds);
         info.setStart(System.currentTimeMillis());
-        tempAdded.put(player.getUniqueId().toString(), info);
-        return true;
+        tempAdded.put(uuid, info);
+        return ReturnResult.SUCCEDED;
     }
 
-
-    /* GETTERS */
+    @Override
     public boolean canAllowFriends() {
         return allowFriends;
     }
+
+    @Override
     public boolean canAllowHoppers() {
         return allowHoppers;
     }
+
+    @Override
     public boolean canAllowRedstone() {
         return allowRedstone;
     }
+
+    @Override
     public Map<String, TimeInfo> getTempAdded() {
         return tempAdded;
     }
+
+    @Override
     public Map<String, String> getAdded() {
         return added;
     }
+
+    @Override
     public Map<String, String> getTrusted() {
         return trusted;
     }
+
+    @Override
     public String getOwnerName() {
         return ownerName;
     }
+
+    @Override
     public String getOwnerUUID() {
         return ownerUUID;
     }
 
-    /* SETTERS */
+    @Override
     public void setAdded(Map<String, String> added) {
         this.added = added;
     }
+
+    @Override
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
     }
+
+    @Override
     public void setOwnerUUID(String ownerUUID) {
         this.ownerUUID = ownerUUID;
     }
+
+    @Override
     public void setTrusted(Map<String, String> trusted) {
         this.trusted = trusted;
     }
+
+    @Override
     public void setTempAdded(Map<String, TimeInfo> tempAdded) {
         this.tempAdded = tempAdded;
     }
 
-    public StorageTagCompound toCompound () {
+    @Override
+    public StorageTagCompound toCompound() {
         StorageTagCompound compound = new StorageTagCompound();
 
         compound.setString("name", ownerName);
         compound.setString("uuid", ownerUUID);
-
 
         if (trusted.isEmpty()) {
             compound.setString("trusted", Base64Wrapper.encodeString("[]"));
@@ -187,7 +218,6 @@ public class ProtectionData {
             compound.setString("trusted", Base64Wrapper.encodeString(array.toJSONString()));
         }
 
-
         if (added.isEmpty()) {
             compound.setString("added", Base64Wrapper.encodeString("[]"));
         }else{
@@ -200,7 +230,6 @@ public class ProtectionData {
             });
             compound.setString("added", Base64Wrapper.encodeString(array.toJSONString()));
         }
-
 
         if (tempAdded.isEmpty()) {
             compound.setString("temporary", Base64Wrapper.encodeString("[]"));
@@ -219,7 +248,8 @@ public class ProtectionData {
         return compound;
     }
 
-    public void loadCompound (StorageTagCompound compound) {
+    @Override
+    public void loadCompound(StorageTagCompound compound) {
         ownerName = compound.getString("name");
         ownerUUID = compound.getString("uuid");
 
@@ -244,7 +274,7 @@ public class ProtectionData {
             array.forEach(o -> {
                 JSONObject json = (JSONObject) o;
                 String uuid = String.valueOf(json.get("name"));
-                ProtectionData.TimeInfo info = new ProtectionData.TimeInfo();
+                TimeInfo info = new TimeInfo();
                 info.setStart(Long.parseLong(String.valueOf(json.get("start"))));
                 info.setSeconds(Integer.parseInt(String.valueOf(json.get("seconds"))));
                 if (info.hasTimeRemaining()) {
@@ -253,37 +283,4 @@ public class ProtectionData {
             });
         }
     }
-
-    public static class TimeInfo {
-        private long start = 0;
-        private int seconds = 0;
-
-        public void setStart(long start) {
-            this.start = start;
-        }
-
-        public void setSeconds(int seconds) {
-            this.seconds = seconds;
-        }
-
-        public long getStart() {
-            return start;
-        }
-
-        public int getSeconds() {
-            return seconds;
-        }
-
-        public boolean hasTimeRemaining () {
-            long seconds = start / 1000L;
-            long secondsLeft = (seconds + this.seconds) - (System.currentTimeMillis() / 1000L);
-            return (secondsLeft > 0L);
-        }
-
-        public int getRemainingTime () {
-            long seconds = start / 1000L;
-            return (int) ((seconds + this.seconds) - (System.currentTimeMillis() / 1000L));
-        }
-    }
 }
-

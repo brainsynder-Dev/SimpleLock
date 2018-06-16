@@ -1,6 +1,6 @@
 package lock.brainsynder.utils;
 
-import lock.brainsynder.storage.ProtectionData;
+import lock.brainsynder.api.IProtection;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -56,7 +56,7 @@ public class Utilities {
                     if ((b.getType() == block.getType())) {
                         Sign sign = ProtectionUtils.hasAttachedSign(b);
                         if (sign != null) {
-                            ProtectionData data = ProtectionUtils.getProtectionInfo(sign);
+                            IProtection data = ProtectionUtils.getProtectionInfo(sign);
                             if (!data.isOwner(player)) {
                                 return false;
                             }
