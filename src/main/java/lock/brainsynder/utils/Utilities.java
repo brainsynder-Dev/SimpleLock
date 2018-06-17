@@ -1,5 +1,6 @@
 package lock.brainsynder.utils;
 
+import lock.brainsynder.Core;
 import lock.brainsynder.api.IProtection;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
+import org.bukkit.scheduler.BukkitRunnable;
 import simple.brainsynder.nms.IActionMessage;
 import simple.brainsynder.utils.Reflection;
 
@@ -231,5 +233,14 @@ public class Utilities {
         doorstate.setData((MaterialData) openablestate);
         doorstate.update();
         block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
+    }
+
+    public static void sync (Runnable runnable) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        }.runTask(Core.getPlugin(Core.class));
     }
 }

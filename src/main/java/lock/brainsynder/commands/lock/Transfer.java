@@ -15,7 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -58,6 +57,7 @@ public class Transfer extends SubCommand {
                     if (lines[0].equalsIgnoreCase("[private]")) privateSign = true;
                     if (lines[0].replace(" ", "").equalsIgnoreCase("[moreusers]")) trusted = true;
                 }else{
+                    String line = lines[i];
                     if ((i == 1) && privateSign) {
                         owner = lines[1];
                         if (owner != null) {
@@ -71,10 +71,12 @@ public class Transfer extends SubCommand {
                     if (i >= 1) {
                         if (privateSign && trusted) {
                             if (i > 1) {
-                                data.addTrusted(Bukkit.getOfflinePlayer(lines[i]));
+                                if ((line != null) && (!line.isEmpty()))
+                                    data.addTrusted(Bukkit.getOfflinePlayer(line));
                             }
                         }else if ((!privateSign) && trusted) {
-                            data.addTrusted(Bukkit.getOfflinePlayer(lines[i]));
+                            if ((line != null) && (!line.isEmpty()))
+                                data.addTrusted(Bukkit.getOfflinePlayer(line));
                         }
                     }
                 }
@@ -97,20 +99,21 @@ public class Transfer extends SubCommand {
                     if (json.containsKey("name") && (json.containsKey("uuid_formatted"))) {
                         String name = String.valueOf(json.get("name"));
                         String uuid = String.valueOf(json.get("uuid_formatted"));
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                data.setOwnerName(name);
-                                data.setOwnerUUID(uuid);
-                                if ((finalLoc != null) && (!finalLoc.isEmpty())) {
-                                    sender.sendMessage(core.getConfiguration().getString(ConfigValues.TRANSFER_SUCCESSFUL, true));
-                                    ProtectionUtils.registerProtection(finalLoc, data, core);
-                                }
+                        Utilities.sync(() ->{
+                            data.setOwnerName(name);
+                            data.setOwnerUUID(uuid);
+                            if ((finalLoc != null) && (!finalLoc.isEmpty())) {
+                                sender.sendMessage(core.getConfiguration().getString(ConfigValues.TRANSFER_SUCCESSFUL, true));
+                                ProtectionUtils.registerProtection(finalLoc, data, core);
                             }
-                        }.runTask(core);
+                        });
                     }
-                }catch (Exception e) {}
+                }catch (Exception e) {
+                    Utilities.sync(() -> sender.sendMessage(core.getConfiguration().getString(ConfigValues.TRANSFER_FAILED, true)));
+                }
             });
+        }else{
+            sender.sendMessage(core.getConfiguration().getString(ConfigValues.TRANSFER_FAILED, true));
         }
     }
 }
