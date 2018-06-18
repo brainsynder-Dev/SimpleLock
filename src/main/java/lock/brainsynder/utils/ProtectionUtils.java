@@ -30,6 +30,9 @@ public class ProtectionUtils {
         });
     }
     public static void saveProtections (Core core) {
+        StorageTagCompound compound = new StorageTagCompound();
+        protectionMap.forEach((loc, data) -> compound.setTag(loc, data.toCompound()));
+        core.getStorage().setCompound(compound);
         core.getStorage().save();
     }
 
