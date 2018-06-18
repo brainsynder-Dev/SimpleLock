@@ -26,7 +26,7 @@ public class Temp extends SubCommand {
 
     public Temp (Core core) {
         this.core = core;
-        registerCompletion(1, Arrays.asList("5", "10", "40", "60", "120"));
+        registerCompletion(2, Arrays.asList("5", "10", "40", "60", "120"));
     }
 
     @Override
