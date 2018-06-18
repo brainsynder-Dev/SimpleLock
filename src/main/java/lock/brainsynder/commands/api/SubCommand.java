@@ -2,7 +2,9 @@ package lock.brainsynder.commands.api;
 
 import lock.brainsynder.commands.api.annotations.ICommand;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -11,6 +13,7 @@ import simple.brainsynder.utils.Reflection;
 import java.util.*;
 
 public class SubCommand {
+    protected boolean tabOfflinePlayer = true;
     private Map<Integer, List<String>> tabCompletion = new HashMap<>();
 
     public void run(CommandSender sender) {
@@ -54,7 +57,14 @@ public class SubCommand {
         Validate.notNull(args, "Arguments cannot be null");
         if (!tabCompletion.isEmpty()) {
             int length = args.length;
-            if (!tabCompletion.containsKey(length)) return;
+            if (!tabCompletion.containsKey(length)) {
+                if (tabOfflinePlayer) {
+                    for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+                        completions.add(player.getName());
+                    }
+                }
+                return;
+            }
             List<String> replacements = tabCompletion.getOrDefault(length, new ArrayList<>());
             String toComplete = args[length - 1].toLowerCase(Locale.ENGLISH);
             for (String command : replacements) {
