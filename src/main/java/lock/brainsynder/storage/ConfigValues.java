@@ -22,7 +22,16 @@ public enum ConfigValues {
 
     PLAYER_REMOVE_SUCCESSFUL ("message.player-remove.successfully"),
     PLAYER_REMOVE_FAILED ("message.player-remove.failed"),
-    PLAYER_REMOVE_MISSING ("message.player-remove.missing");
+    PLAYER_REMOVE_MISSING ("message.player-remove.missing"),
+
+    PLAYER_INFO_OWNER ("message.info.owner"),
+    PLAYER_INFO_ALLOWED ("message.info.allowed"),
+    PLAYER_INFO_TRUSTED_PREFIX ("message.info.trusted.prefix"),
+    PLAYER_INFO_TRUSTED_LIST ("message.info.trusted.list"),
+    PLAYER_INFO_ADDED_PREFIX ("message.info.added.prefix"),
+    PLAYER_INFO_ADDED_LIST ("message.info.added.list"),
+    PLAYER_INFO_TEMP_PREFIX ("message.info.temp-added.prefix"),
+    PLAYER_INFO_TEMP_LIST ("message.info.temp-added.list");
 
     private String path;
     ConfigValues (String path) {

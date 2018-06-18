@@ -86,6 +86,15 @@ public class Core extends JavaPlugin {
         config.setDefault(ConfigValues.PLAYER_REMOVE_MISSING, "&4[&c~&4] &c{user} &7isn't added/trusted to this block");
         config.setDefault(ConfigValues.PLAYER_REMOVE_FAILED, "&4[&c~&4] &c{user} &7couldn't be removed because they own the block");
 
+        config.setDefault(ConfigValues.PLAYER_INFO_OWNER, "&7Owner: &b{user}");
+        config.setDefault(ConfigValues.PLAYER_INFO_ALLOWED, "&7Allowed: &b{value}");
+        config.setDefault(ConfigValues.PLAYER_INFO_ADDED_PREFIX, "&3Added:");
+        config.setDefault(ConfigValues.PLAYER_INFO_ADDED_LIST, " &7- &b{user}");
+        config.setDefault(ConfigValues.PLAYER_INFO_TRUSTED_PREFIX, "&2Trusted:");
+        config.setDefault(ConfigValues.PLAYER_INFO_TRUSTED_LIST, " &7- &a{user}");
+        config.setDefault(ConfigValues.PLAYER_INFO_TEMP_PREFIX, "&6Temporary:");
+        config.setDefault(ConfigValues.PLAYER_INFO_TEMP_LIST, " &7- &e{user} &7Remaining: &e{seconds}s");
+
         // Loads the values from the config
         config.getStringList(ConfigValues.ALLOWED_BLOCKS).forEach(value -> {
             value = value.toUpperCase();
