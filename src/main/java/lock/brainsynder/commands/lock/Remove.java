@@ -24,6 +24,7 @@ public class Remove extends SubCommand {
 
     public Remove (Core core) {
         this.core = core;
+        registerPlayerCompletion(1);
     }
 
     @Override

@@ -23,6 +23,7 @@ public class Trust extends SubCommand {
     private Core core;
 
     public Trust (Core core) {
+        registerPlayerCompletion(1);
         this.core = core;
     }
 
